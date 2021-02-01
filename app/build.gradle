@@ -1,0 +1,190 @@
+
+apply plugin: 'kotlin-multiplatform'
+
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    defaultConfig {
+        applicationId "ru.test"
+        minSdkVersion 21
+        targetSdkVersion 30
+        multiDexEnabled true
+        versionCode 23
+        versionName "1.23"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    configurations {
+        androidTestApi {}
+        androidTestDebugApi {}
+        androidTestReleaseApi {}
+        testApi {}
+        testDebugApi {}
+        testReleaseApi {}
+    }
+
+}
+
+kotlin {
+    android("android")
+    // This is for iPhone emulator
+    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+    targets {
+        final def iOSTarget = System.getenv('SDK_NAME')?.startsWith("iphoneos")  \
+                           ? presets.iosArm64 : presets.iosX64
+
+        fromPreset(iOSTarget, 'ios') {
+            binaries {
+                framework()
+            }
+        }
+    }
+    // iosArm64("ios") {
+    ///   binaries {
+    //       framework()
+    //   }
+    // }
+    sourceSets {
+
+        jvm().compilations["main"].defaultSourceSet {
+            dependencies {
+//                configurations.kapt
+//                "kapt"("androidx.room:room-compiler:2.2.6")
+
+
+            }
+        }
+
+        commonMain {
+
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.20.0")
+                implementation("io.ktor:ktor-client-core:1.3.2")
+                implementation("io.ktor:ktor-client-json:1.3.2")
+                implementation("io.ktor:ktor-client-serialization:1.3.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
+
+//                                kapt "androidx.room:room-compiler:2.2.6"
+
+
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        androidMain {
+
+
+            dependencies {
+                implementation kotlin('stdlib')
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
+                implementation("io.ktor:ktor-client-android:1.3.2")
+                implementation("io.ktor:ktor-client-json-jvm:1.3.2")
+                implementation("io.ktor:ktor-client-serialization-jvm:1.3.2")
+
+                def room_version = "2.2.6"
+
+                implementation "androidx.room:room-runtime:$room_version"
+//                kapt "androidx.room:room-compiler:$room_version"
+
+
+                // optional - Kotlin Extensions and Coroutines support for Room
+                implementation "androidx.room:room-ktx:$room_version"
+
+            }
+        }
+        androidTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+            }
+        }
+        iosMain {
+            dependencies {
+                //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.20.0")
+                implementation("io.ktor:ktor-client-ios:1.3.2")
+                implementation("io.ktor:ktor-client-json-native:1.3.2")
+                implementation("io.ktor:ktor-client-serialization-native:1.3.2")
+            }
+        }
+        iosTest {
+        }
+    }
+}
+
+
+apply 'plugin': 'kotlin-kapt'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.3.0'
+
+
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+
+    implementation 'com.google.firebase:firebase-ml-vision:24.1.0'
+    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.2'
+
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.11'
+
+
+    kapt "androidx.room:room-compiler:2.2.6"
+
+
+
+//    testImplementation 'junit:junit:4.13'
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+
+configurations {
+    compileClasspath
+}
+
+
+
+
